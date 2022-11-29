@@ -1,5 +1,7 @@
 
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:fluttter_hive/models/notes_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -18,6 +20,10 @@ class _HomeScreenState extends State<HomeScreen> {
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
 
+  List<Color> colors = [Colors.purple , Colors.black38, Colors.green, Colors.blue , Colors.red] ;
+
+  Random random = Random(3);
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,42 +34,51 @@ class _HomeScreenState extends State<HomeScreen> {
         valueListenable: Boxes.getData().listenable(),
         builder: (context,box ,_){
           var data = box.values.toList().cast<NotesModel>();
-          return ListView.builder(
-              itemCount: box.length,
-              reverse: true,
-              shrinkWrap: true,
-              itemBuilder: (context, index){
-                return Card(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Row(
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: ListView.builder(
+                itemCount: box.length,
+                reverse: true,
+                shrinkWrap: true,
+                itemBuilder: (context, index){
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Card(
+                      color: colors[random.nextInt(4)],
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Text(data[index].title.toString() , style: TextStyle(fontSize: 20 , fontWeight: FontWeight.w500),),
-                            Spacer(),
-                            InkWell(
-                                onTap: (){
-                                  delete(data[index]);
-                                },
-                                child: Icon(Icons.delete , color: Colors.red,)),
-                            SizedBox(width: 15,),
-                            InkWell(
-                                onTap: (){
-                                  _editDialog(data[index], data[index].title.toString(), data[index].description.toString());
-                                },
-                                child: Icon(Icons.edit)) ,
+                            Row(
+                              children: [
+                                Text(data[index].title.toString() ,
+                                  style: TextStyle(fontSize: 20 , fontWeight: FontWeight.w500 , color: Colors.white),),
+                                Spacer(),
+                                InkWell(
+                                    onTap: (){
+                                      delete(data[index]);
+                                    },
+                                    child: Icon(Icons.delete , color: Colors.white,)),
+                                SizedBox(width: 15,),
+                                InkWell(
+                                    onTap: (){
+                                      _editDialog(data[index], data[index].title.toString(), data[index].description.toString());
+                                    },
+                                    child: Icon(Icons.edit, color: Colors.white,)) ,
 
+                              ],
+                            ),
+                            Text(data[index].description.toString(),
+                              style: TextStyle(fontSize: 18 , fontWeight: FontWeight.w300, color: Colors.white),),
                           ],
                         ),
-                        Text(data[index].description.toString(), style: TextStyle(fontSize: 18 , fontWeight: FontWeight.w300),),
-                      ],
+                      ),
                     ),
-                  ),
-                );
-              }
+                  );
+                }
+            ),
           );
         },
       ),
